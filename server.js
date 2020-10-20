@@ -19,9 +19,12 @@ server.listen( port, () => {
 
 // GET
 server.get("/users", (req, res) => {
-   // simulating a real call to a database
    const users = db.getUsers()
-   res.json(users)
+   if(users){
+      res.json(users)
+   }else{
+      res.status(500).json( { errorMessage: "Information could not be retrieved" } )
+   }
 })
 
 // GET BY ID
@@ -32,14 +35,14 @@ server.get('/users/:id', (req,res) => {
    if(user){
       res.json(user)
    }else {
-      res.status(404).json( { message: "temp message" } )
+      res.status(404).json( { message: "Could not retrieve user information" } )
    }
 })
 
 // POST
 server.post('/users', (req,res) => {
-   if( req.body.name && req.body.bio) {
 
+   if( req.body.name && req.body.bio) {
       try{ 
          const newUser = db.createUser( { name: req.body.name, bio : req.body.bio} )
          res.status(201).json(newUser) // 201 = resource created
@@ -58,10 +61,14 @@ server.put('/users/:id', (req,res)=> {
    const user = db.getUsersById(id)
 
    if(user) {
+
+      if( !req.body.name || !req.body.bio){
+         
+      }
       const updateduser = db.updateUser( id, { name: req.body.name } )
       res.json(updateduser)
    }else{
-      res.status(404).json( { message: "temp"} )
+      res.status(404).json( { message: "User id not found"} )
    }
 })
 
@@ -74,6 +81,6 @@ server.delete('/users/:id', (req,res) => {
       db.deleteUser(id)
       res.status(204).end() // successful empty response
    }else{
-      res.status(404).json( {message: "User not found"} ) 
+      res.status(404).json( {message: "User not found: could not be removed"} ) 
    }
 })
