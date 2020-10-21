@@ -27,16 +27,16 @@ module.exports = {
 }
 
 
-// GET
+// GET ========================================
 function getUsers() {
    return users
 }
-// GET BY ID
+// GET BY ID ==================================
 function getUsersById(id) {
    return users.find( user => user.id === id )
 }
 
-// POST / CREATE USER
+// POST / CREATE USER =========================
 function createUser(data) {
    // create new user
    const newUser = {
@@ -48,7 +48,7 @@ function createUser(data) {
    return newUser
 }
 
-// PUT
+// PUT ========================================
 function updateUser(id, data) {
    const index = users.findIndex( user => user.id === id)
 
@@ -56,7 +56,7 @@ function updateUser(id, data) {
    return users[index]
 }
 
-// DELETE
+// DELETE ======================================
 function deleteUser(id) {
    users = users.filter( user => user.id !== id )
 }

@@ -1,6 +1,7 @@
 const express = require('express')
 const port = 5000
 const server = express()
+
 //DATABASE ( FAKE ) 
 const db = require("./database")
 
@@ -15,9 +16,9 @@ server.listen( port, () => {
    console.log(`listening on port ${port}`)
 })
 
-// BEGIN FUNCTIONS------------------------
+// -------------------BEGIN FUNCTIONS------------------------
 
-// GET
+// GET ==========================================================
 server.get("/users", (req, res) => {
    const users = db.getUsers()
    if(users){
@@ -27,7 +28,7 @@ server.get("/users", (req, res) => {
    }
 })
 
-// GET BY ID
+// GET BY ID =====================================================
 server.get('/users/:id', (req,res) => {
    const id = req.params.id
    const user = db.getUsersById(id)
@@ -39,7 +40,7 @@ server.get('/users/:id', (req,res) => {
    }
 })
 
-// POST
+// POST ==========================================================
 server.post('/users', (req,res) => {
 
    if( req.body.name && req.body.bio) {
@@ -55,7 +56,7 @@ server.post('/users', (req,res) => {
    }  
 })
 
-// PUT
+// PUT ==========================================================
 server.put('/users/:id', (req,res)=> {
    const id = req.params.id
    const user = db.getUsersById(id)
@@ -63,16 +64,24 @@ server.put('/users/:id', (req,res)=> {
    if(user) {
 
       if( !req.body.name || !req.body.bio){
+         res.status(400).json( { message: "Please provide name and bio"} )
+      }else{
          
+         try{
+            const updateduser = db.updateUser( id, { name: req.body.name, bio: req.body.bio } )
+            res.status(200).json(updateduser)
+         }catch{
+            res.status(500).json( { errorMessage: "Error while modifying" } )
+         }
       }
-      const updateduser = db.updateUser( id, { name: req.body.name } )
-      res.json(updateduser)
+
    }else{
       res.status(404).json( { message: "User id not found"} )
    }
+
 })
 
-// DELETE
+// DELETE ==========================================================
 server.delete('/users/:id', (req,res) => {
    const id = req.params.id
    const user = db.getUsersById(id)
